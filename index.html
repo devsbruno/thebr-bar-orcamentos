@@ -468,8 +468,8 @@
             const lat = position.coords.latitude;
             const lon = position.coords.longitude;
             
-            // Standard Google Maps link format for better compatibility
-            mapsInput.value = `https://www.google.com/maps?q=${lat},${lon}`;
+            // CORRECTED: Standard clean Google Maps link
+            mapsInput.value = `https://maps.google.com/?q=${lat},${lon}`;
             
             txt.innerText = "Traduzindo coordenadas...";
             
@@ -522,7 +522,7 @@
             let local = document.getElementById('local').value;
             const mapsLink = document.getElementById('mapsLink').value;
             
-            // Append map link if available
+            // Append map link if available (Only happens if GPS was used)
             if(mapsLink && !local.includes("http")) {
                 local += `\n(📍 Link Mapa: ${mapsLink})`;
             }
@@ -547,16 +547,17 @@
 
             // Construct final WhatsApp message
             let mensagem = `*ORCAMENTO THE BAR*\n\n`;
-            mensagem += `*Nome:* ${nome}\n`;
-            mensagem += `*Evento:* ${tipoEvento}\n`;
-            mensagem += `*Data:* ${dataFormatada}\n`;
-            mensagem += `*Local:* ${local}\n`;
-            mensagem += `*Pessoas:* ${convidados}\n`;
-            mensagem += `*Duracao:* ${duracao}h\n`;
-            mensagem += `*Tipo:* ${alcool}\n`;
+            mensagem += `*Nome:* ${nome}\n\n`;
+            mensagem += `*Evento:* ${tipoEvento}\n\n`;
+            mensagem += `*Data:* ${dataFormatada}\n\n`;
+            mensagem += `*Local:* ${local}\n\n`;
+            mensagem += `*Pessoas:* ${convidados}\n\n`;
+            mensagem += `*Duracao:* ${duracao}h\n\n`;
+            mensagem += `*Tipo:* ${alcool}\n\n`;
             mensagem += `--------------------------------\n`;
-            mensagem += `*PACOTE: ${pacoteNome.toUpperCase()}*\n`;
-            mensagem += `Included Drinks:\n${drinksLista}\n`;
+            mensagem += `*PACOTE: ${pacoteNome.toUpperCase()}*\n\n`;
+            // CORRECTED: Translate to Portuguese
+            mensagem += `🍹 Drinks Inclusos:\n${drinksLista}\n\n`;
             mensagem += `--------------------------------\n\n`;
             mensagem += `Aguardo valores e disponibilidade!`;
 
