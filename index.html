@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The BR Bar | Orçamento VIP</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --gold: #D4AF37;
+            --gold-hover: #b5932a;
+            --text-main: #f0f0f0;
+            --text-muted: #a0a0a0;
+            --border: #333;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            background-image: radial-gradient(circle at top, #2a2a2a 0%, #121212 60%);
+        }
+
+        /* --- HEADER --- */
+        header {
+            text-align: center;
+            padding: 3rem 1rem 2rem;
+            border-bottom: 1px solid var(--gold);
+            margin-bottom: 2rem;
+        }
+
+        .logo-box {
+            display: inline-block;
+            border: 2px solid var(--gold);
+            padding: 1rem 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .logo-text {
+            font-family: 'Cinzel', serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--gold);
+            letter-spacing: 4px;
+            text-transform: uppercase;
+        }
+
+        .slogan {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        /* --- CONTAINER --- */
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 0 1.5rem 5rem;
+        }
+
+        /* --- VALUE PROPOSITION --- */
+        .info-card {
+            background: rgba(212, 175, 55, 0.05);
+            border-left: 4px solid var(--gold);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border-radius: 0 8px 8px 0;
+        }
+        .info-card p { font-size: 0.9rem; color: var(--text-main); margin-bottom: 0.5rem; }
+        .info-card i { color: var(--gold); margin-right: 8px; }
+
+        /* --- FORMULÁRIO --- */
+        .form-section {
+            background-color: var(--card-bg);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            border: 1px solid var(--border);
+        }
+
+        .form-group { margin-bottom: 1.5rem; }
+
+        label {
+            display: block;
+            margin-bottom: 0.6rem;
+            color: var(--gold);
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 14px;
+            background-color: #252525;
+            border: 1px solid #444;
+            border-radius: 6px;
+            color: white;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1rem;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--gold);
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.1);
+        }
+
+        /* --- GEOLOCALIZAÇÃO --- */
+        .geo-btn {
+            background: transparent;
+            color: var(--gold);
+            border: 1px solid var(--gold);
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            margin-top: 5px;
+            display: inline-flex;
+            align-items: center;
+            transition: 0.3s;
+        }
+        .geo-btn:hover { background: rgba(212, 175, 55, 0.1); }
+        .geo-btn i { margin-right: 5px; }
+
+        /* --- SELETOR DE PACOTES --- */
+        .package-selector { display: grid; gap: 1rem; margin-bottom: 1.5rem; }
+
+        .package-option {
+            background: #252525;
+            border: 1px solid #444;
+            padding: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+            position: relative;
+        }
+        .package-option:hover { border-color: #666; }
+        .package-option input[type="radio"] { position: absolute; opacity: 0; }
+        .package-option.selected {
+            border-color: var(--gold);
+            background: rgba(212, 175, 55, 0.1);
+        }
+
+        .pkg-title {
+            color: var(--gold);
+            font-weight: 700;
+            font-size: 1.1rem;
+            display: block;
+            margin-bottom: 0.3rem;
+        }
+        .pkg-desc { font-size: 0.85rem; color: #ccc; }
+
+        /* --- PREVIEW DO CARDÁPIO (NOVO) --- */
+        #menuPreview {
+            display: none; /* Escondido por padrão */
+            background: #151515;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px dashed var(--gold);
+            margin-bottom: 1.5rem;
+            animation: fadeIn 0.5s;
+        }
+        #menuPreview h4 { color: var(--gold); margin-bottom: 10px; font-family: 'Cinzel', serif; }
+        #menuPreview ul { list-style: none; padding-left: 0; }
+        #menuPreview li { margin-bottom: 5px; font-size: 0.9rem; color: #ddd; }
+        #menuPreview li i { color: var(--gold); margin-right: 8px; font-size: 0.8rem; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- BOTÃO --- */
+        .btn-whatsapp {
+            display: block;
+            width: 100%;
+            padding: 1.2rem;
+            background: linear-gradient(45deg, #128C7E, #25D366);
+            color: white;
+            font-weight: 700;
+            text-align: center;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin-top: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 5px 20px rgba(37, 211, 102, 0.2);
+            transition: transform 0.2s;
+        }
+        .btn-whatsapp:hover { transform: translateY(-2px); }
+
+        .credits {
+            text-align: center;
+            margin-top: 3rem;
+            font-size: 0.7rem;
+            color: #444;
+            font-family: 'Cinzel', serif;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-box">
+            <div class="logo-text">The BR Bar</div>
+        </div>
+        <div class="slogan">Premium Bartenders & Events</div>
+    </header>
+
+    <div class="container">
+        
+        <div class="info-card">
+            <p><i class="fas fa-glass-cheers"></i> <strong>Tudo Incluso:</strong> Bartenders profissionais, cardápio completo, balcão LED e utensílios.</p>
+            <p><i class="fas fa-check-circle"></i> Sem dor de cabeça: levamos a estrutura, você leva os convidados.</p>
+        </div>
+
+        <div class="form-section">
+            <form id="orderForm">
+                
+                <div class="form-group">
+                    <label>Seu Nome</label>
+                    <input type="text" id="nome" placeholder="Ex: Bruno Barusky">
+                </div>
+
+                <div class="form-group">
+                    <label>Tipo do Evento</label>
+                    <select id="tipoEvento">
+                        <option value="Confraternização">Confraternização</option>
+                        <option value="Aniversário">Aniversário</option>
+                        <option value="Casamento">Casamento</option>
+                        <option value="15 Anos">15 Anos</option>
+                        <option value="Outro">Outro (Especificar na conversa)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Data do Evento</label>
+                    <input type="date" id="dataEvento">
+                </div>
+
+                <div class="form-group">
+                    <label>Endereço do Evento</label>
+                    <textarea id="local" rows="2" placeholder="Ex: Rua das Palmeiras, 100 - Barra da Tijuca (Salão de Festas)"></textarea>
+                    <button type="button" class="geo-btn" onclick="getLocation()">
+                        <i class="fas fa-map-marker-alt"></i> Usar minha localização atual
+                    </button>
+                    <input type="hidden" id="mapsLink"> </div>
+
+                <div class="form-group">
+                    <div style="display: flex; gap: 1rem;">
+                        <div style="flex: 1;">
+                            <label>Convidados</label>
+                            <input type="number" id="convidados" placeholder="100">
+                        </div>
+                        <div style="flex: 1;">
+                            <label>Duração (H)</label>
+                            <input type="number" id="duracao" placeholder="5">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Escolha o Pacote</label>
+                    <div class="package-selector">
+                        
+                        <label class="package-option" onclick="selectPackage(this, 'essencial')">
+                            <input type="radio" name="pacote" value="Essencial">
+                            <span class="pkg-title">🍸 TBB Essencial</span>
+                            <span class="pkg-desc">Clássicos & Eficiência. Ideal para resenhas.</span>
+                        </label>
+
+                        <label class="package-option" onclick="selectPackage(this, 'tropical')">
+                            <input type="radio" name="pacote" value="Tropical">
+                            <span class="pkg-title">🍹 TBB Tropical</span>
+                            <span class="pkg-desc">Vibrante & Colorido. O favorito para festas.</span>
+                        </label>
+
+                        <label class="package-option" onclick="selectPackage(this, 'premium')">
+                            <input type="radio" name="pacote" value="Premium">
+                            <span class="pkg-title">🥂 TBB Premium</span>
+                            <span class="pkg-desc">Sofisticação Máxima. Drinks Autorais e Luxo.</span>
+                        </label>
+
+                    </div>
+                </div>
+
+                <div id="menuPreview">
+                    <h4 id="previewTitle">Cardápio Incluso:</h4>
+                    <ul id="previewList"></ul>
+                </div>
+
+                <div class="form-group">
+                    <label>Preferência de Álcool</label>
+                    <select id="alcool">
+                        <option value="Com e Sem Álcool">Opções Com e Sem Álcool (Recomendado)</option>
+                        <option value="Apenas Com Álcool">Apenas Com Álcool</option>
+                        <option value="Zero Álcool">Zero Álcool (Mocktails)</option>
+                    </select>
+                </div>
+
+                <button type="button" class="btn-whatsapp" onclick="enviarOrcamento()">
+                    <i class="fab fa-whatsapp"></i> SOLICITAR ORÇAMENTO OFICIAL
+                </button>
+            </form>
+        </div>
+
+        <div class="credits">
+            Powered by <strong>Barusky Labs</strong>
+        </div>
+    </div>
+
+    <script>
+        // --- DADOS DOS PACOTES (Fácil de editar) ---
+        const pacotesData = {
+            essencial: [
+                "Caipirinha Clássica",
+                "Caipivodka (3 Frutas)",
+                "Sex on the Beach",
+                "Mojito",
+                "Piña Colada",
+                "Mocktail: Soda Italiana"
+            ],
+            tropical: [
+                "Todos do Essencial +",
+                "Blue Lagoon",
+                "Gin Tônica (Frutas)",
+                "Gin Tropical",
+                "Mocktail: Coquetel de Frutas"
+            ],
+            premium: [
+                "Caipirinha/Vodka Premium",
+                "Moscow Mule (Caneca Cobre)",
+                "Negroni Clássico",
+                "Aperol Spritz",
+                "Gins Variados & Especiarias",
+                "Drink Autoral TBB",
+                "3 Mocktails Sofisticados"
+            ]
+        };
+
+        // --- FUNÇÃO DE SELEÇÃO E PREVIEW ---
+        function selectPackage(element, tipo) {
+            // Visual
+            document.querySelectorAll('.package-option').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+            element.querySelector('input').checked = true;
+
+            // Lógica do Preview
+            const previewBox = document.getElementById('menuPreview');
+            const lista = document.getElementById('previewList');
+            
+            // Limpa lista atual
+            lista.innerHTML = "";
+
+            // Preenche nova lista com ícones
+            pacotesData[tipo].forEach(drink => {
+                const li = document.createElement('li');
+                li.innerHTML = `<i class="fas fa-cocktail"></i> ${drink}`;
+                lista.appendChild(li);
+            });
+
+            // Mostra a caixa
+            previewBox.style.display = "block";
+        }
+
+        // --- FUNÇÃO DE GEOLOCALIZAÇÃO ---
+        function getLocation() {
+            const localInput = document.getElementById('local');
+            const mapsInput = document.getElementById('mapsLink');
+            
+            if (navigator.geolocation) {
+                localInput.placeholder = "Buscando localização...";
+                navigator.geolocation.getCurrentPosition(showPosition, showError);
+            } else {
+                alert("Geolocalização não é suportada neste navegador.");
+            }
+        }
+
+        function showPosition(position) {
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+            // Cria link do Google Maps
+            const link = `https://www.google.com/maps?q=${lat},${lon}`;
+            
+            document.getElementById('local').value = `Localização capturada via GPS (Ver link no envio)`;
+            document.getElementById('mapsLink').value = link;
+            alert("Localização capturada! O link do mapa será enviado junto com o orçamento.");
+        }
+
+        function showError(error) {
+            document.getElementById('local').placeholder = "Não foi possível pegar a localização. Digite manualmente.";
+            alert("Erro ao obter localização. Por favor, digite o endereço.");
+        }
+
+        // --- FUNÇÃO DE ENVIO (CORREÇÃO DE CARACTERES) ---
+        function enviarOrcamento() {
+            const nome = document.getElementById('nome').value;
+            const tipoEvento = document.getElementById('tipoEvento').value;
+            const dataInput = document.getElementById('dataEvento').value;
+            
+            let local = document.getElementById('local').value;
+            const mapsLink = document.getElementById('mapsLink').value;
+            // Se tiver link de mapa, anexa ao local
+            if(mapsLink) {
+                local += `\n(📍 Mapa: ${mapsLink})`;
+            }
+
+            const convidados = document.getElementById('convidados').value;
+            const duracao = document.getElementById('duracao').value;
+            const alcool = document.getElementById('alcool').value;
+            const pacoteEl = document.querySelector('input[name="pacote"]:checked');
+            
+            if(!nome || !convidados || !pacoteEl) {
+                alert("Por favor, preencha os campos obrigatórios.");
+                return;
+            }
+
+            const pacoteNome = pacoteEl.value;
+            // Pega a lista de drinks baseada na seleção para enviar no texto
+            // Convertemos a chave 'Essencial' -> 'essencial' para buscar no objeto
+            const drinksLista = pacotesData[pacoteNome.toLowerCase()].map(d => `• ${d}`).join('\n');
+
+            let dataFormatada = "A definir";
+            if(dataInput) {
+                const [ano, mes, dia] = dataInput.split('-');
+                dataFormatada = `${dia}/${mes}/${ano}`;
+            }
+
+            // MENSAGEM LIMPA (Sem caracteres especiais bugados)
+            let mensagem = `*ORCAMENTO THE BAR*\n\n`; // Sem emojis no header pra evitar bugs
+            mensagem += `*Evento:* ${tipoEvento}\n`;
+            mensagem += `*Data:* ${dataFormatada}\n`;
+            mensagem += `*Local:* ${local}\n`;
+            mensagem += `*Pessoas:* ${convidados}\n`;
+            mensagem += `*Duracao:* ${duracao}h\n`;
+            mensagem += `*Tipo:* ${alcool}\n`;
+            mensagem += `--------------------------------\n`; // Separador seguro
+            mensagem += `*PACOTE: ${pacoteNome.toUpperCase()}*\n`;
+            mensagem += `Included Drinks:\n${drinksLista}\n`;
+            mensagem += `--------------------------------\n\n`;
+            mensagem += `Aguardo valores e disponibilidade!`;
+
+            const textoFinal = encodeURIComponent(mensagem);
+            const numero = "5521975142922"; 
+            
+            window.open(`https://wa.me/${numero}?text=${textoFinal}`, '_blank');
+        }
+    </script>
+</body>
+</html>
