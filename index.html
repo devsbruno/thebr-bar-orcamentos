@@ -66,7 +66,7 @@
             padding: 0 1.5rem 5rem;
         }
 
-        /* --- PADRÃO DE QUALIDADE (NOVO) --- */
+        /* --- Quality Standards Section --- */
         .quality-section {
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid #333;
@@ -417,6 +417,7 @@
             ]
         };
 
+        // Handle dynamic 'Other' event type input
         function verificarOutro() {
             const select = document.getElementById('tipoEvento');
             const container = document.getElementById('outroTipoContainer');
@@ -428,6 +429,7 @@
             }
         }
 
+        // Update selected package visual and menu preview
         function selectPackage(element, tipo) {
             document.querySelectorAll('.package-option').forEach(el => el.classList.remove('selected'));
             element.classList.add('selected');
@@ -444,6 +446,7 @@
             previewBox.style.display = "block";
         }
 
+        // Geolocation Logic
         function getLocation() {
             const btn = document.getElementById('btnGeo');
             const txt = document.getElementById('geoText');
@@ -465,9 +468,12 @@
             const lat = position.coords.latitude;
             const lon = position.coords.longitude;
             
-            mapsInput.value = `maps.google.com${lat},${lon}`;
+            // Standard Google Maps link format for better compatibility
+            mapsInput.value = `https://www.google.com/maps?q=${lat},${lon}`;
+            
             txt.innerText = "Traduzindo coordenadas...";
             
+            // Reverse Geocoding using OpenStreetMap (Nominatim)
             fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
                 .then(response => response.json())
                 .then(data => {
@@ -503,6 +509,8 @@
 
         function enviarOrcamento() {
             const nome = document.getElementById('nome').value;
+
+            // Handle event type logic
             let tipoEvento = document.getElementById('tipoEvento').value;
             if (tipoEvento === "Outro") {
                 const outroValor = document.getElementById('outroTipoInput').value;
@@ -513,6 +521,8 @@
             const dataInput = document.getElementById('dataEvento').value;
             let local = document.getElementById('local').value;
             const mapsLink = document.getElementById('mapsLink').value;
+            
+            // Append map link if available
             if(mapsLink && !local.includes("http")) {
                 local += `\n(📍 Link Mapa: ${mapsLink})`;
             }
@@ -535,7 +545,9 @@
                 dataFormatada = `${dia}/${mes}/${ano}`;
             }
 
+            // Construct final WhatsApp message
             let mensagem = `*ORCAMENTO THE BAR*\n\n`;
+            mensagem += `*Nome:* ${nome}\n`;
             mensagem += `*Evento:* ${tipoEvento}\n`;
             mensagem += `*Data:* ${dataFormatada}\n`;
             mensagem += `*Local:* ${local}\n`;
