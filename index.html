@@ -66,6 +66,38 @@
             padding: 0 1.5rem 5rem;
         }
 
+        /* --- PADRÃO DE QUALIDADE (NOVO) --- */
+        .quality-section {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+        }
+        .quality-title {
+            color: var(--gold);
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            text-align: center;
+            border-bottom: 1px solid #333;
+            padding-bottom: 0.5rem;
+        }
+        .quality-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 0.8rem;
+            font-size: 0.85rem;
+            color: #ccc;
+        }
+        .quality-item i {
+            color: var(--gold);
+            margin-right: 10px;
+            margin-top: 4px;
+            min-width: 15px;
+        }
+
         .info-card {
             background: rgba(212, 175, 55, 0.05);
             border-left: 4px solid var(--gold);
@@ -94,6 +126,13 @@
             font-weight: 700;
             font-size: 0.9rem;
         }
+        
+        .helper-text {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+            display: block;
+        }
 
         input, select, textarea {
             width: 100%;
@@ -113,7 +152,8 @@
             box-shadow: 0 0 10px rgba(212, 175, 55, 0.1);
         }
 
-        /* --- BOTÃO GPS --- */
+        #outroTipoContainer { display: none; margin-top: 10px; animation: fadeIn 0.3s; }
+
         .geo-btn {
             background: transparent;
             color: var(--gold);
@@ -130,7 +170,6 @@
             justify-content: center;
         }
         .geo-btn:hover { background: rgba(212, 175, 55, 0.1); }
-        .geo-btn i { margin-right: 8px; }
         .geo-btn.loading { opacity: 0.6; cursor: wait; }
 
         .package-selector { display: grid; gap: 1rem; margin-bottom: 1.5rem; }
@@ -173,7 +212,7 @@
         #menuPreview li:last-child { border-bottom: none; }
         #menuPreview li i { color: var(--gold); margin-right: 8px; font-size: 0.8rem; }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
 
         .btn-whatsapp {
             display: block;
@@ -225,18 +264,21 @@
                 
                 <div class="form-group">
                     <label>Seu Nome</label>
-                    <input type="text" id="nome" placeholder="Ex: Marcos Silva">
+                    <input type="text" id="nome" placeholder="Digite seu nome...">
                 </div>
 
                 <div class="form-group">
                     <label>Tipo do Evento</label>
-                    <select id="tipoEvento">
+                    <select id="tipoEvento" onchange="verificarOutro()">
                         <option value="Confraternização">Confraternização</option>
                         <option value="Aniversário">Aniversário</option>
                         <option value="Casamento">Casamento</option>
                         <option value="15 Anos">15 Anos</option>
-                        <option value="Outro">Outro (Especificar na conversa)</option>
+                        <option value="Outro">Outro (Especificar)</option>
                     </select>
+                    <div id="outroTipoContainer">
+                        <input type="text" id="outroTipoInput" placeholder="Qual o tipo do evento?">
+                    </div>
                 </div>
 
                 <div class="form-group">
@@ -246,13 +288,13 @@
 
                 <div class="form-group">
                     <label>Endereço do Evento</label>
-                    <textarea id="local" rows="3" placeholder="Digite o endereço completo ou use o botão abaixo..."></textarea>
+                    <span class="helper-text"><i class="fas fa-map-pin"></i> Atendemos Rio de Janeiro e Grande Rio</span>
+                    <textarea id="local" rows="3" placeholder="Ex: Av. das Américas, 300 - Barra da Tijuca"></textarea>
                     
                     <button type="button" class="geo-btn" id="btnGeo" onclick="getLocation()">
                         <i class="fas fa-map-marker-alt"></i> 
                         <span id="geoText">Preencher endereço com meu GPS</span>
                     </button>
-                    
                     <input type="hidden" id="mapsLink"> 
                 </div>
 
@@ -299,6 +341,25 @@
                     <ul id="previewList"></ul>
                 </div>
 
+                <div class="quality-section">
+                    <div class="quality-title">💎 Padrão de Qualidade TBB</div>
+                    
+                    <div class="quality-item">
+                        <i class="fas fa-user-tie"></i>
+                        <span><strong>Equipe Profissional:</strong> Dimensionada para a melhor experiência (Ex: 1 bartender a cada 40 convidados). Vestimenta preta, sóbria e elegante.</span>
+                    </div>
+
+                    <div class="quality-item">
+                        <i class="fas fa-clock"></i>
+                        <span><strong>Horas Adicionais:</strong> Podem ser contratadas mediante consulta prévia.</span>
+                    </div>
+
+                    <div class="quality-item">
+                        <i class="fas fa-beer"></i>
+                        <span><strong>Importante:</strong> Somos especialistas em coquetelaria. Não incluímos serviço de cerveja/chopp. Sucos e refrigerantes são de responsabilidade do contratante (nossos pacotes já incluem drinks sem álcool).</span>
+                    </div>
+                </div>
+
                 <div class="form-group">
                     <label>Preferência de Álcool</label>
                     <select id="alcool">
@@ -320,7 +381,6 @@
     </div>
 
     <script>
-        // --- DADOS COMPLETOS (SEM RESUMOS) ---
         const pacotesData = {
             essencial: [
                 "Caipirinha Clássica",
@@ -357,6 +417,17 @@
             ]
         };
 
+        function verificarOutro() {
+            const select = document.getElementById('tipoEvento');
+            const container = document.getElementById('outroTipoContainer');
+            if (select.value === "Outro") {
+                container.style.display = "block";
+                document.getElementById('outroTipoInput').focus();
+            } else {
+                container.style.display = "none";
+            }
+        }
+
         function selectPackage(element, tipo) {
             document.querySelectorAll('.package-option').forEach(el => el.classList.remove('selected'));
             element.classList.add('selected');
@@ -364,7 +435,6 @@
 
             const previewBox = document.getElementById('menuPreview');
             const lista = document.getElementById('previewList');
-            
             lista.innerHTML = "";
             pacotesData[tipo].forEach(drink => {
                 const li = document.createElement('li');
@@ -374,24 +444,13 @@
             previewBox.style.display = "block";
         }
 
-        // --- GEOLOCALIZAÇÃO INTELIGENTE (COM TIMEOUT E ENDEREÇO) ---
         function getLocation() {
             const btn = document.getElementById('btnGeo');
             const txt = document.getElementById('geoText');
-            const localInput = document.getElementById('local');
-
-            // Feedback visual de carregamento
             if (navigator.geolocation) {
                 btn.classList.add('loading');
                 txt.innerText = "Buscando satélites...";
-                
-                // Configurações: Alta precisão e Timeout de 8 segundos
-                const options = {
-                    enableHighAccuracy: true,
-                    timeout: 8000, 
-                    maximumAge: 0
-                };
-
+                const options = { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 };
                 navigator.geolocation.getCurrentPosition(showPosition, showError, options);
             } else {
                 alert("Seu navegador não suporta GPS.");
@@ -403,30 +462,22 @@
             const txt = document.getElementById('geoText');
             const localInput = document.getElementById('local');
             const mapsInput = document.getElementById('mapsLink');
-
             const lat = position.coords.latitude;
             const lon = position.coords.longitude;
             
-            // 1. Salva o link do mapa
             mapsInput.value = `maps.google.com${lat},${lon}`;
-
-            // 2. BUSCA O ENDEREÇO (Reverse Geocoding Grátis)
             txt.innerText = "Traduzindo coordenadas...";
             
             fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
                 .then(response => response.json())
                 .then(data => {
-                    // Preenche o campo de texto com o endereço legível
                     const endereco = data.display_name || "Endereço aproximado detectado via GPS";
                     localInput.value = endereco;
-                    
-                    // Reseta botão
                     btn.classList.remove('loading');
                     txt.innerText = "Localização Atualizada!";
                     setTimeout(() => txt.innerText = "Preencher endereço com meu GPS", 3000);
                 })
                 .catch(err => {
-                    // Se falhar a tradução, põe as coordenadas
                     localInput.value = `Lat: ${lat}, Lon: ${lon} (Ver mapa)`;
                     btn.classList.remove('loading');
                     txt.innerText = "GPS ok (Sem endereço)";
@@ -437,21 +488,13 @@
             const btn = document.getElementById('btnGeo');
             const txt = document.getElementById('geoText');
             const localInput = document.getElementById('local');
-
             btn.classList.remove('loading');
             txt.innerText = "Erro no GPS";
-            
             let msg = "Não consegui pegar sua localização.";
             switch(error.code) {
-                case error.PERMISSION_DENIED:
-                    msg = "Você negou a permissão de GPS.";
-                    break;
-                case error.POSITION_UNAVAILABLE:
-                    msg = "Sinal de GPS indisponível.";
-                    break;
-                case error.TIMEOUT:
-                    msg = "O GPS demorou muito para responder. Digite manualmente.";
-                    break;
+                case error.PERMISSION_DENIED: msg = "Você negou a permissão de GPS."; break;
+                case error.POSITION_UNAVAILABLE: msg = "Sinal de GPS indisponível."; break;
+                case error.TIMEOUT: msg = "O GPS demorou muito. Digite manualmente."; break;
             }
             localInput.placeholder = msg;
             alert(msg);
@@ -460,13 +503,16 @@
 
         function enviarOrcamento() {
             const nome = document.getElementById('nome').value;
-            const tipoEvento = document.getElementById('tipoEvento').value;
+            let tipoEvento = document.getElementById('tipoEvento').value;
+            if (tipoEvento === "Outro") {
+                const outroValor = document.getElementById('outroTipoInput').value;
+                if(outroValor) tipoEvento = outroValor;
+                else tipoEvento = "Evento (Não especificado)";
+            }
+
             const dataInput = document.getElementById('dataEvento').value;
-            
             let local = document.getElementById('local').value;
             const mapsLink = document.getElementById('mapsLink').value;
-            
-            // Se o usuário usou o GPS, adiciona o link do mapa no final do endereço
             if(mapsLink && !local.includes("http")) {
                 local += `\n(📍 Link Mapa: ${mapsLink})`;
             }
@@ -483,7 +529,6 @@
 
             const pacoteNome = pacoteEl.value;
             const drinksLista = pacotesData[pacoteNome.toLowerCase()].map(d => `• ${d}`).join('\n');
-
             let dataFormatada = "A definir";
             if(dataInput) {
                 const [ano, mes, dia] = dataInput.split('-');
@@ -505,7 +550,6 @@
 
             const textoFinal = encodeURIComponent(mensagem);
             const numero = "5521975142922"; 
-            
             window.open(`https://wa.me/${numero}?text=${textoFinal}`, '_blank');
         }
     </script>
