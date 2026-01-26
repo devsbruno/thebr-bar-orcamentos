@@ -9,6 +9,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css">
 
     <style>
         :root {
@@ -18,6 +21,7 @@
             --text-main: #f0f0f0;
             --text-muted: #a0a0a0;
             --border: #333;
+            --error: #ff4d4d;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -91,6 +95,7 @@
             font-size: 0.85rem;
             color: #ccc;
         }
+        /* Update: Golden Check Icons */
         .quality-item i {
             color: var(--gold);
             margin-right: 10px;
@@ -134,6 +139,7 @@
             display: block;
         }
 
+        /* Input styling */
         input, select, textarea {
             width: 100%;
             padding: 14px;
@@ -146,10 +152,21 @@
             outline: none;
             transition: 0.3s;
         }
+        /* Custom datepicker input styling to match theme */
+        .flatpickr-input {
+            background-color: #252525 !important;
+            color: white !important;
+        }
 
         input:focus, select:focus, textarea:focus {
             border-color: var(--gold);
             box-shadow: 0 0 10px rgba(212, 175, 55, 0.1);
+        }
+
+        /* Validation Error State */
+        input.error, select.error {
+            border-color: var(--error);
+            box-shadow: 0 0 5px rgba(255, 77, 77, 0.3);
         }
 
         #outroTipoContainer { display: none; margin-top: 10px; animation: fadeIn 0.3s; }
@@ -241,6 +258,18 @@
             color: #444;
             font-family: 'Cinzel', serif;
         }
+        
+        /* Flatpickr Event Badges (For future implementation) */
+        .event-busy {
+            background: #ff4d4d;
+            border-radius: 50%;
+            width: 5px;
+            height: 5px;
+            display: inline-block;
+            position: absolute;
+            bottom: 2px;
+            left: calc(50% - 2.5px);
+        }
     </style>
 </head>
 <body>
@@ -283,13 +312,17 @@
 
                 <div class="form-group">
                     <label>Data do Evento</label>
-                    <input type="date" id="dataEvento">
+                    <span class="helper-text" style="color:#D4AF37;">⚠️ Selecione a data para ver disponibilidade</span>
+                    <input type="text" id="dataEvento" placeholder="Toque para abrir a agenda...">
                 </div>
 
                 <div class="form-group">
-                    <label>Endereço do Evento</label>
+                    <label>Local do Evento</label>
                     <span class="helper-text"><i class="fas fa-map-pin"></i> Atendemos Rio de Janeiro e Grande Rio</span>
-                    <textarea id="local" rows="3" placeholder="Ex: Av. das Américas, 300 - Barra da Tijuca"></textarea>
+                    
+                    <input type="text" id="localNome" placeholder="Nome do local (Ex: Salão de Festas Royal, Sítio Viver...)" style="margin-bottom: 10px;">
+                    
+                    <textarea id="local" rows="3" placeholder="Endereço (Rua, Número, Bairro)"></textarea>
                     
                     <button type="button" class="geo-btn" id="btnGeo" onclick="getLocation()">
                         <i class="fas fa-map-marker-alt"></i> 
@@ -306,7 +339,8 @@
                         </div>
                         <div style="flex: 1;">
                             <label>Duração (H)</label>
-                            <input type="number" id="duracao" placeholder="5">
+                            <input type="number" id="duracao" placeholder="Min: 4h - Max: 6h" min="4" max="6">
+                            <span class="helper-text">Padrão: 4 a 6 horas</span>
                         </div>
                     </div>
                 </div>
@@ -318,19 +352,19 @@
                         <label class="package-option" onclick="selectPackage(this, 'essencial')">
                             <input type="radio" name="pacote" value="Essencial">
                             <span class="pkg-title">🍸 TBB Essencial</span>
-                            <span class="pkg-desc">Clássicos & Eficiência. Ideal para resenhas.</span>
+                            <span class="pkg-desc">Clássicos & Eficiência. O melhor custo-benefício para sua resenha.</span>
                         </label>
 
                         <label class="package-option" onclick="selectPackage(this, 'tropical')">
                             <input type="radio" name="pacote" value="Tropical">
                             <span class="pkg-title">🍹 TBB Tropical</span>
-                            <span class="pkg-desc">Vibrante & Colorido. O favorito para festas.</span>
+                            <span class="pkg-desc">Vibrante & Colorido. O favorito absoluto para animar a pista de dança.</span>
                         </label>
 
                         <label class="package-option" onclick="selectPackage(this, 'premium')">
                             <input type="radio" name="pacote" value="Premium">
                             <span class="pkg-title">🥂 TBB Premium</span>
-                            <span class="pkg-desc">Sofisticação Máxima. Drinks Autorais e Luxo.</span>
+                            <span class="pkg-desc">A experiência completa da alta coquetelaria para convidados exigentes.</span>
                         </label>
 
                     </div>
@@ -345,17 +379,17 @@
                     <div class="quality-title">💎 Padrão de Qualidade TBB</div>
                     
                     <div class="quality-item">
-                        <i class="fas fa-user-tie"></i>
+                        <i class="fas fa-check-circle"></i>
                         <span><strong>Equipe Profissional:</strong> Dimensionada para a melhor experiência (Ex: 1 bartender a cada 40 convidados). Vestimenta preta, sóbria e elegante.</span>
                     </div>
 
                     <div class="quality-item">
-                        <i class="fas fa-clock"></i>
+                        <i class="fas fa-check-circle"></i>
                         <span><strong>Horas Adicionais:</strong> Podem ser contratadas mediante consulta prévia.</span>
                     </div>
 
                     <div class="quality-item">
-                        <i class="fas fa-beer"></i>
+                        <i class="fas fa-check-circle"></i>
                         <span><strong>Importante:</strong> Somos especialistas em coquetelaria. Não incluímos serviço de cerveja/chopp. Sucos e refrigerantes são de responsabilidade do contratante (nossos pacotes já incluem drinks sem álcool).</span>
                     </div>
                 </div>
@@ -370,7 +404,7 @@
                 </div>
 
                 <button type="button" class="btn-whatsapp" onclick="enviarOrcamento()">
-                    <i class="fab fa-whatsapp"></i> SOLICITAR ORÇAMENTO OFICIAL
+                    <i class="fab fa-whatsapp"></i> GARANTIR MINHA DATA E SOLICITAR ORÇAMENTO
                 </button>
             </form>
         </div>
@@ -380,7 +414,15 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/pt.js"></script>
+    
     <script>
+        /**
+         * The BR Bar - Logic Controller
+         * Updated by: CTO Refactor (v2.0)
+         */
+
         const pacotesData = {
             essencial: [
                 "Caipirinha Clássica",
@@ -416,6 +458,23 @@
                 "3 Mocktails Sofisticados"
             ]
         };
+
+        // Initialize Flatpickr (Agenda Logic)
+        document.addEventListener('DOMContentLoaded', function() {
+            flatpickr("#dataEvento", {
+                locale: "pt",
+                minDate: "today",
+                dateFormat: "Y-m-d", // Format for Code logic
+                altInput: true,
+                altFormat: "d/m/Y", // Format for User view
+                disableMobile: "true", // Force custom look on mobile
+                // Future integration: blocked dates array goes here
+                // disable: ["2026-02-15", "2026-02-20"], 
+                onChange: function(selectedDates, dateStr, instance) {
+                    // Logic to check availability via API can go here
+                }
+            });
+        });
 
         // Handle dynamic 'Other' event type input
         function verificarOutro() {
@@ -468,7 +527,7 @@
             const lat = position.coords.latitude;
             const lon = position.coords.longitude;
             
-            // CORRECTED: Standard clean Google Maps link
+            // KEEP: User validated format 0{lat}
             mapsInput.value = `https://maps.google.com/?q=${lat},${lon}`;
             
             txt.innerText = "Traduzindo coordenadas...";
@@ -518,45 +577,69 @@
                 else tipoEvento = "Evento (Não especificado)";
             }
 
-            const dataInput = document.getElementById('dataEvento').value;
-            let local = document.getElementById('local').value;
+            const dataInput = document.getElementById('dataEvento').value; // Returns YYYY-MM-DD
+            
+            // Logic: Venue Name + Address
+            const localNome = document.getElementById('localNome').value;
+            const localEndereco = document.getElementById('local').value;
             const mapsLink = document.getElementById('mapsLink').value;
             
+            let localCompleto = "";
+            if (localNome) localCompleto += `${localNome} - `;
+            localCompleto += localEndereco;
+
             // Append map link if available (Only happens if GPS was used)
-            if(mapsLink && !local.includes("http")) {
-                local += `\n(📍 Link Mapa: ${mapsLink})`;
+            if(mapsLink && !localCompleto.includes("http")) {
+                localCompleto += `\n(📍 Link Mapa: ${mapsLink})`;
             }
 
             const convidados = document.getElementById('convidados').value;
-            const duracao = document.getElementById('duracao').value;
+            const duracao = parseInt(document.getElementById('duracao').value);
             const alcool = document.getElementById('alcool').value;
             const pacoteEl = document.querySelector('input[name="pacote"]:checked');
             
-            if(!nome || !convidados || !pacoteEl) {
-                alert("Por favor, preencha: Nome, Convidados e Pacote.");
+            // --- VALIDATION LAYER ---
+            let errors = [];
+
+            if(!nome) errors.push("Preencha seu nome");
+            if(!convidados) errors.push("Informe a quantidade de convidados");
+            if(!pacoteEl) errors.push("Selecione um pacote");
+            if(!dataInput) errors.push("Selecione a data do evento");
+            
+            // Duration Logic Rule
+            if(isNaN(duracao) || duracao < 4 || duracao > 6) {
+                errors.push("A duração do evento deve ser entre 4 e 6 horas.");
+                document.getElementById('duracao').classList.add('error');
+            } else {
+                document.getElementById('duracao').classList.remove('error');
+            }
+
+            if(errors.length > 0) {
+                alert("Atenção:\n• " + errors.join("\n• "));
                 return;
             }
 
             const pacoteNome = pacoteEl.value;
             const drinksLista = pacotesData[pacoteNome.toLowerCase()].map(d => `• ${d}`).join('\n');
+            
             let dataFormatada = "A definir";
             if(dataInput) {
                 const [ano, mes, dia] = dataInput.split('-');
                 dataFormatada = `${dia}/${mes}/${ano}`;
             }
 
-            // Construct final WhatsApp message
+            // Construct final WhatsApp message (Strict Format for Parser)
             let mensagem = `*ORCAMENTO THE BAR*\n\n`;
             mensagem += `*Nome:* ${nome}\n\n`;
             mensagem += `*Evento:* ${tipoEvento}\n\n`;
             mensagem += `*Data:* ${dataFormatada}\n\n`;
-            mensagem += `*Local:* ${local}\n\n`;
+            mensagem += `*Local:* ${localCompleto}\n\n`;
             mensagem += `*Pessoas:* ${convidados}\n\n`;
             mensagem += `*Duracao:* ${duracao}h\n\n`;
             mensagem += `*Tipo:* ${alcool}\n\n`;
             mensagem += `--------------------------------\n`;
             mensagem += `*PACOTE: ${pacoteNome.toUpperCase()}*\n`;
-            mensagem += `🍹 Drinks Inclusos:\n\n${drinksLista}\n\n`;
+            mensagem += `🍹 Drinks Inclusos:\n\n${drinksLista}\n`;
             mensagem += `--------------------------------\n\n`;
             mensagem += `Aguardo valores e disponibilidade!`;
 
