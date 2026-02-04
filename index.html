@@ -724,6 +724,22 @@
             if (!pacoteEl) errors.push("Selecione um pacote");
             if (!dataInput) errors.push("Selecione a data do evento");
             if(!horaInicio) errors.push("Informe o horário de início do evento");
+            
+            // --- LOCATION LOGIC (Scenarios A & B) ---
+
+            // UNIVERSAL RULE: Venue Name is ALWAYS mandatory
+            // (Covers both Scenario A and Scenario B)
+            if (!localNome) {
+                errors.push("Informe o Nome do Local (ex: Sítio Royal, Salão de Festas...)");
+            }
+
+            // CONDITIONAL RULE: Physical Address Validation
+            if (!mapsLink) {
+                // SCENARIO A (No GPS): The 'Address' text field becomes mandatory
+                if (!localEndereco) {
+                    errors.push("Informe o Endereço completo do evento (Rua, Número, Bairro)");
+                }
+            }
 
             // Duration Logic Rule
             if (isNaN(duracao) || duracao < 4 || duracao > 6) {
