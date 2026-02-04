@@ -407,9 +407,17 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Data do Evento</label>
+                    <div style="display: flex; gap: 1rem;">
+                        <div style="flex: 2;">
+                            <label>Data</label>
+                            <input type="text" id="dataEvento" placeholder="Selecionar data...">
+                        </div>
+                        <div style="flex: 1;">
+                            <label>Início</label>
+                            <input type="text" id="horaInicio" placeholder="15:00">
+                        </div>
+                    </div>
                     <span class="helper-text" style="color:#D4AF37;">⚠️ Selecione a data para ver disponibilidade</span>
-                    <input type="text" id="dataEvento" placeholder="Toque para abrir a agenda...">
                 </div>
 
                 <div class="form-group">
@@ -531,7 +539,7 @@
         const pacotesData = {
             essencial: [
                 "Caipirinha Clássica",
-                "Caipivodka (3 Frutas)",
+                "Caipivodka",
                 "Sex on the Beach",
                 "Mojito",
                 "Piña Colada",
@@ -573,6 +581,15 @@
                 onChange: function (selectedDates, dateStr, instance) {
                     // Logic to check availability via API can go here
                 }
+            });
+
+            flatpickr("#horaInicio", {
+                enableTime: true,
+                noCalendar: true, // Only shows clock
+                dateFormat: "H:i", // 24h
+                time_24hr: true,
+                disableMobile: "true", //Force custom look on mobile
+                defaultDate: "15:00" // Standard hour
             });
         });
 
@@ -678,6 +695,7 @@
             }
 
             const dataInput = document.getElementById('dataEvento').value; // Returns YYYY-MM-DD
+            const horaInicio = document.getElementById('horaInicio').value;
 
             // Logic: Venue Name + Address
             const localNome = document.getElementById('localNome').value;
@@ -705,6 +723,7 @@
             if (!convidados) errors.push("Informe a quantidade de convidados");
             if (!pacoteEl) errors.push("Selecione um pacote");
             if (!dataInput) errors.push("Selecione a data do evento");
+            if(!horaInicio) errors.push("Informe o horário de início do evento");
 
             // Duration Logic Rule
             if (isNaN(duracao) || duracao < 4 || duracao > 6) {
@@ -732,7 +751,8 @@
             let mensagem = `*ORCAMENTO THE BAR*\n\n`;
             mensagem += `*Nome:* ${nome}\n\n`;
             mensagem += `*Evento:* ${tipoEvento}\n\n`;
-            mensagem += `*Data:* ${dataFormatada}\n\n`;
+            mensagem += `*Data:* ${dataFormatada}\n`;
+            mensagem += `*Início:* ${horaInicio}h\n\n`;
             mensagem += `*Local:* ${localCompleto}\n\n`;
             mensagem += `*Pessoas:* ${convidados}\n\n`;
             mensagem += `*Duracao:* ${duracao}h\n\n`;
